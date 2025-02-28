@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* أنماط عامة */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f2f5;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* منطقة المنشورات */
+    .posts-feed {
+        margin-top: 20px;
+    }
+
+    .post {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        padding: 15px;
+    }
+
+    .post-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .post-header img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .post-header .username {
+        font-weight: bold;
+    }
+
+    .post-header .timestamp {
+        color: #666;
+        font-size: 0.9em;
+    }
+
+    .post-content {
+        margin-bottom: 10px;
+    }
+
+    .post-actions {
+        display: flex;
+        justify-content: space-around;
+        border-top: 1px solid #ddd;
+        padding-top: 10px;
+    }
+
+    .post-actions button {
+        background: none;
+        border: none;
+        color: #666;
+        cursor: pointer;
+        font-size: 0.9em;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+
+    .post-actions button:hover {
+        background-color: #f0f2f5;
+    }
+
+    .post-comments {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #ddd;
+    }
+
+    .comment {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .comment img {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .comment .content {
+        background-color: #f0f2f5;
+        padding: 8px;
+        border-radius: 10px;
+        flex-grow: 1;
+    }
+
+    .comment .username {
+        font-weight: bold;
+    }
+
+    .comment .timestamp {
+        color: #666;
+        font-size: 0.8em;
+    }
+</style>
+
+<div class="container">
+    <!-- منطقة المنشورات -->
+    <div class="posts-feed">
+        <!-- المنشورات -->
+        {% for post in posts %}
+        <div class="post">
+            <div class="post-header">
+                <!-- عرض صورة المستخدم -->
+                <img src="{{ url_for('static', filename='profile_pictures/' + post.profile_picture) if post.profile_picture else url_for('static', filename='profile_pictures/default.png') }}" alt="صورة المستخدم">
+                <div>
+                    <div class="username">{{ post.username }}</div>
+                    <div class="timestamp">{{ post.timestamp }}</div>
+                </div>
+            </div>
+            <div class="post-content">
+                {{ post.content }}
+            </div>
+            <div class="post-actions">
+                <form action="{{ url_for('like_post', post_id=post.id) }}" method="post">
+                    <button type="submit">إعجاب ({{ post.likes_count }})</button>
+                </form>
+                <button onclick="toggleComment('comment-{{ post.id }}')">تعليق</button>
+                <button>مشاركة</button>
+            </div>
+            <div class="post-comments" id="comment-{{ post.id }}" style="display: none;">
+                {% for comment in post.comments %}
+                <div class="comment">
+                    <!-- عرض صورة المستخدم للتعليق -->
+                    <img src="{{ url_for('static', filename='profile_pictures/' + comment.profile_picture) if comment.profile_picture else url_for('static', filename='profile_pictures/default.png') }}" alt="صورة المستخدم">
+                    <div class="content">
+                        <div class="username">{{ comment.username }}</div>
+                        <div class="timestamp">{{ comment.timestamp }}</div>
+                        <p>{{ comment.content }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+                <form action="{{ url_for('add_comment', post_id=post.id) }}" method="post">
+                    <textarea name="content" placeholder="أضف تعليقًا..." required></textarea>
+                    <button type="submit">إرسال</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    function toggleComment(commentId) {
+        var commentSection = document.getElementById(commentId);
+        if (commentSection.style.display === "none") {
+            commentSection.style.display = "block";
+        } else {
+            commentSection.style.display = "none";
+        }
+    }
+</script>
+{% endblock %}
