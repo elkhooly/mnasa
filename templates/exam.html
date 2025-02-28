@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 style="text-align: center; margin-top: 20px;">{{ exam_name }}</h2>
+    <form method="POST">
+        {% for question in questions %}
+            <div class="question">
+                <p><strong>السؤال:</strong> {{ question.question_text }}</p>
+                {% if question.question_type == 'mcq' %}
+                    <p><strong>الاختيارات:</strong></p>
+                    <ul>
+                        {% for choice in question.choices %}
+                            <li>
+                                <input type="radio" name="q{{ question.id }}" value="{{ choice.choice_text }}">
+                                {{ choice.choice_text }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% elif question.question_type == 'true_false' %}
+                    <p><strong>الإجابة:</strong></p>
+                    <input type="radio" name="q{{ question.id }}" value="true"> صح
+                    <input type="radio" name="q{{ question.id }}" value="false"> خطأ
+                {% elif question.question_type == 'short_answer' %}
+                    <p><strong>الإجابة:</strong></p>
+                    <input type="text" name="q{{ question.id }}" placeholder="أدخل إجابتك هنا">
+                {% endif %}
+            </div>
+            <hr>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">إرسال الإجابات</button>
+    </form>
+</div>
+{% endblock %}

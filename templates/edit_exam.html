@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>تعديل الامتحان</h2>
+
+    <form method="POST">
+        <div class="form-group">
+            <label>اسم الامتحان:</label>
+            <input type="text" name="exam_name"
+                   value="{{ exam.exam_name }}"
+                   class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label>الوصف:</label>
+            <textarea name="description"
+                      class="form-control"
+                      rows="3">{{ exam.description }}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">حفظ التعديلات</button>
+        <a href="{{ url_for('subjects') }}" class="btn btn-secondary">إلغاء</a>
+    </form>
+</div>
+{% endblock %}

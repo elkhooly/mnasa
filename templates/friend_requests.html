@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %} طلبات الصداقة {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">طلبات الصداقة</h2>
+
+    <!-- عرض الرسائل الفلاشية -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} text-center" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if requests %}
+        <div class="table-responsive">
+            <table class="table table-bordered text-center bg-white shadow-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th>الصورة</th>
+                        <th>اسم المستخدم</th>
+                        <th>قبول</th>
+                        <th>رفض</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in requests %}
+                    <tr>
+                        <td>
+                            <img src="{{ url_for('static', filename='profile_pictures/' ~ (request.profile_picture or 'default.png')) }}"
+                                 alt="صورة {{ request.username }}" width="50" height="50" class="rounded-circle">
+                        </td>
+                        <td>{{ request.username }}</td>
+                        <td>
+                            <form action="{{ url_for('accept_friend_request', request_id=request.id) }}" method="post">
+                                <button type="submit" class="btn btn-success btn-sm">قبول</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="{{ url_for('reject_friend_request', request_id=request.id) }}" method="post">
+                                <button type="submit" class="btn btn-danger btn-sm">رفض</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-muted text-center mt-3">⚠️ لا توجد طلبات صداقة جديدة</p>
+    {% endif %}
+</div>
+{% endblock %}

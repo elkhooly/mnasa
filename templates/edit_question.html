@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">
+                <i class="fas fa-edit"></i> تعديل السؤال
+            </h3>
+        </div>
+
+        <div class="card-body">
+            <form method="POST">
+                <!-- نص السؤال -->
+                <div class="form-group">
+                    <label>نص السؤال:</label>
+                    <textarea class="form-control" name="question_text" rows="3" required>{{ question.question_text }}</textarea>
+                </div>
+
+                <!-- نوع السؤال -->
+                <div class="form-group">
+                    <label>نوع السؤال:</label>
+                    <select class="form-control" id="question_type" name="question_type" onchange="showFields()" required>
+                        <option value="mcq" {% if question.question_type =='mcq' %}selected{% endif %}>اختيار من متعدد</option>
+                        <option value="true_false" {% if question.question_type =='true_false' %}selected{% endif %}>صح/خطأ</option>
+                        <option value="short_answer" {% if question.question_type =='short_answer' %}selected{% endif %}>إجابة قصيرة</option>
+                    </select>
+                </div>
+
+                <!-- حقول MCQ -->
+                <div id="mcq_fields" class="dynamic-field" style="display: {% if question.question_type == 'mcq' %}block{% else %}none{% endif %};">
+                    {% for i in range(4) %}
+                    <div class="form-group">
+                        <label>الاختيار {{ loop.index }}:</label>
+                        <input type="text" class="form-control"
+                               name="choice{{ loop.index }}"
+                               value="{% if choices %}{{ choices[i].choice_text }}{% endif %}">
+                    </div>
+                    {% endfor %}
+
+                    <div class="form-group">
+                        <label>الاختيار الصحيح:</label>
+                        <select class="form-control" name="correct_answer">
+                            {% for i in range(4) %}
+                            <option value="{{ i+1 }}"
+                                {% if question.correct_answer|string == (i+1)|string %}selected{% endif %}>
+                                الاختيار {{ i+1 }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- حقول True/False -->
+                <div id="true_false_fields" class="dynamic-field" style="display: {% if question.question_type == 'true_false' %}block{% else %}none{% endif %};">
+                    <div class="form-group">
+                        <label>الإجابة الصحيحة:</label>
+                        <select class="form-control" name="correct_answer">
+                            <option value="true" {% if question.correct_answer =='true' %}selected{% endif %}>صح</option>
+                            <option value="false" {% if question.correct_answer =='false' %}selected{% endif %}>خطأ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- حقول Short Answer -->
+                <div id="short_answer_fields" class="dynamic-field" style="display: {% if question.question_type == 'short_answer' %}block{% else %}none{% endif %};">
+                    <div class="form-group">
+                        <label>الإجابة الصحيحة:</label>
+                        <input type="text" class="form-control"
+                               name="correct_answer"
+                               value="{{ question.correct_answer }}">
+                    </div>
+                </div>
+
+                <!-- أزرار التحكم -->
+                <div class="mt-4 d-flex justify-content-between">
+                    <button type="submit" class="btn btn-success px-5">
+                        <i class="fas fa-save"></i> حفظ التغييرات
+                    </button>
+                    <a href="{{ url_for('edit_exam', exam_id=question.exam_id) }}" class="btn btn-secondary px-5">
+                        <i class="fas fa-times"></i> إلغاء
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showFields() {
+        const questionType = document.getElementById('question_type').value;
+        document.querySelectorAll('.dynamic-field').forEach(field => {
+            field.style.display = 'none';
+        });
+
+        if (questionType === 'mcq') {
+            document.getElementById('mcq_fields').style.display = 'block';
+        } else if (questionType === 'true_false') {
+            document.getElementById('true_false_fields').style.display = 'block';
+        } else if (questionType === 'short_answer') {
+            document.getElementById('short_answer_fields').style.display = 'block';
+        }
+    }
+</script>
+
+<!-- تضمين Font Awesome للأيقونات -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+{% endblock %}

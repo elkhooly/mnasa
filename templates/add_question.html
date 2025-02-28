@@ -1,0 +1,26 @@
+<form action="{{ url_for('add_question') }}" method="POST">
+    <label>نص السؤال:</label>
+    <input type="text" name="question_text" required>
+
+    <label>نوع السؤال:</label>
+    <select name="question_type" id="question_type" required>
+        <option value="mcq">اختيار من متعدد</option>
+        <option value="true_false">صح أو خطأ</option>
+    </select>
+
+    <div id="mcq_options">
+        <label>اختيارات (اكتب كل اختيار في سطر جديد):</label>
+        <textarea name="choices"></textarea>
+    </div>
+
+    <label>الإجابة الصحيحة:</label>
+    <input type="text" name="correct_answer" required>
+
+    <button type="submit">إضافة السؤال</button>
+</form>
+
+<script>
+    document.getElementById("question_type").addEventListener("change", function() {
+        document.getElementById("mcq_options").style.display = this.value == "mcq" ? "block" : "none";
+    });
+</script>

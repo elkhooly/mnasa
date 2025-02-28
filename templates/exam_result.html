@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 style="text-align: center; margin-top: 20px;">نتيجة الامتحان</h2>
+    <div class="result">
+        <p><strong>النتيجة:</strong> {{ score }} / {{ total }}</p>
+        <p><strong>النسبة المئوية:</strong> {{ (score / total * 100) | round(2) }}%</p>
+    </div>
+    <a href="{{ url_for('student_grades') }}" class="btn btn-primary">عرض الدرجات</a>
+</div>
+{% endblock %}

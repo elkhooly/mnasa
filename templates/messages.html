@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %} أصدقاؤك {% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        direction: rtl;
+        text-align: center;
+        background-color: #f8f9fa;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: auto;
+        margin-top: 50px;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .friend-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .friend-item {
+        display: flex;
+        align-items: center;
+        background: #fff;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: background 0.3s;
+    }
+
+    .friend-item:hover {
+        background: #f1f1f1;
+    }
+
+    .friend-item img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-left: 15px;
+        border: 2px solid #ddd;
+        object-fit: cover;
+    }
+
+    .friend-item a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        flex-grow: 1;
+        text-align: right;
+    }
+</style>
+<div class="container">
+    <h2>الدردشة</h2>
+    <ul class="friend-list">
+        {% for friend in friends %}
+            <li class="friend-item">
+                 <img src="{{ url_for('static', filename='profile_pictures/' + friend.profile_picture) }}"
+                 alt="{{ friend.username }}" class="user-image">
+                <a href="{{ url_for('chat', friend_id=friend.id) }}">{{ friend.username }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}

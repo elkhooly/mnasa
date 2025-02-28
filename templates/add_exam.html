@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <h2 class="text-center text-primary">
+            <i class="fas fa-plus-circle"></i> إضافة امتحان جديد
+        </h2>
+        <form method="POST">
+            <div class="form-group">
+                <label for="exam_name"><i class="fas fa-file-signature"></i> اسم الامتحان:</label>
+                <input type="text" class="form-control" id="exam_name" name="exam_name" required placeholder="أدخل اسم الامتحان">
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="exam_description"><i class="fas fa-info-circle"></i> وصف الامتحان:</label>
+                <textarea class="form-control" id="exam_description" name="exam_description" rows="3" placeholder="أدخل وصفًا موجزًا عن الامتحان"></textarea>
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-check"></i> إضافة الامتحان
+                </button>
+                <a href="{{ url_for('subjects') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> الرجوع
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+قد
+ة

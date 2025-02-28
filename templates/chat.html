@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    /* أنماط عامة للدردشة */
+    .chat-container {
+        max-width: 600px;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        margin: auto;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        background-color: #fff;
+    }
+
+    .chat-header {
+        background-color: #075e54;
+        color: white;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+    }
+
+    .user-image {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-left: 10px;
+    }
+
+    .username {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .back-button {
+        color: white;
+        font-size: 24px;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+
+    .back-button:hover {
+        color: #ddd;
+    }
+
+    .chat-box {
+        padding: 10px;
+        flex-grow: 1;
+        overflow-y: auto;
+        background-color: #ece5dd;
+    }
+
+    .message-container {
+        display: flex;
+        margin: 10px 0;
+        max-width: 80%;
+    }
+
+    .sent {
+        background-color: #dcf8c6;
+        margin-right: auto;
+        justify-content: flex-end;
+        border-radius: 10px;
+    }
+
+    .received {
+        background-color: #ffffff;
+        margin-left: auto;
+        justify-content: flex-start;
+        border-radius: 10px;
+    }
+
+    .message {
+        display: inline-block;
+        padding: 8px 12px;
+        border-radius: 10px;
+        word-wrap: break-word;
+        font-size: 16px;
+    }
+
+    .message-username {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .message-time {
+        font-size: 12px;
+        color: #999;
+        margin-top: 5px;
+        text-align: right;
+    }
+
+    .message-box {
+        display: flex;
+        padding: 10px;
+        background: #f0f0f0;
+        border-top: 1px solid #ccc;
+    }
+
+    #message {
+        flex-grow: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 20px;
+        margin-right: 10px;
+        font-size: 16px;
+    }
+
+    button {
+        padding: 10px 20px;
+        background-color: #075e54;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    button:hover {
+        background-color: #128c7e;
+    }
+
+    @media (max-width: 768px) {
+        .chat-container {
+            width: 100%;
+            height: 75vh;
+            border-radius: 0;
+        }
+
+        .chat-header {
+            font-size: 16px;
+            padding: 8px;
+        }
+
+        .message {
+            font-size: 14px;
+        }
+
+        #message {
+            font-size: 14px;
+        }
+
+        button {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+    }
+</style>
+
+<div class="chat-container">
+    <div class="chat-header">
+        <a href="{{ url_for('messages') }}" class="back-button">&#8592;</a>
+        <div class="user-info">
+            <img src="{{ url_for('static', filename='profile_pictures/' + friend.profile_picture) }}"
+                 alt="{{ friend.username }}" class="user-image">
+            <span class="username">{{ friend.username }}</span>
+        </div>
+    </div>
+
+
+    <div class="chat-box" id="chat-box">
+        {% for message in messages %}
+            <div class="message-container {% if message.sender_id == session['id'] %}sent{% else %}received{% endif %}">
+                <div class="message">
+                    <div class="message-username">
+                        {% if message.sender_id == session['id'] %}أنت{% else %}{{ friend.username }}{% endif %}
+                    </div>
+                    {{ message.message }}
+                    <div class="message-time">{{ message.timestamp.strftime('%H:%M') }}</div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <form id="message-form" class="message-box">
+        <input type="text" name="message" id="message" placeholder="اكتب رسالة..." required>
+        <button type="submit">إرسال</button>
+    </form>
+</div>
+
+<script>
+    function fetchMessages() {
+        $.get("{{ url_for('get_messages', friend_id=friend_id) }}", function(data) {
+            $("#chat-box").html(data);
+            $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
+        });
+    }
+
+    setInterval(fetchMessages, 2000);
+
+    $("#message-form").submit(function(event) {
+        event.preventDefault();
+        $.post("{{ url_for('chat', friend_id=friend_id) }}", $(this).serialize(), function(response) {
+            if (response.status === "success") {
+                $("#message-form")[0].reset();
+                fetchMessages();
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
+    });
+</script>
+
+{% endblock %}

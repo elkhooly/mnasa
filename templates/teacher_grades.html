@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 style="text-align: center; margin-top: 20px;"> درجات الطلاب</h2>
+
+    <!-- قائمة منسدلة لاختيار الامتحان -->
+    <form method="GET" action="{{ url_for('teacher_grades') }}">
+        <div class="form-group">
+            <label for="exam_id">اختر الامتحان:</label>
+            <select class="form-control" id="exam_id" name="exam_id" onchange="this.form.submit()">
+                <option value="">-- اختر امتحان --</option>
+                {% for exam in exams %}
+                    <option value="{{ exam.exam_id }}" {% if exam.exam_id == selected_exam_id %}selected{% endif %}>
+                        {{ exam.exam_name }} ({{ exam.subject_name }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+
+    <!-- عرض درجات الطلاب للامتحان المحدد -->
+    {% if selected_exam %}
+        <div class="exam">
+            <h3>{{ selected_exam.exam_name }} ({{ selected_exam.subject_name }})</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>اسم الطالب</th>
+                        <th>النتيجة</th>
+                        <th>النسبة المئوية</th>
+                        <th>التاريخ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for grade in selected_exam.grades %}
+                        <tr>
+                            <td>{{ grade.username }}</td>
+                            <td>{{ grade.score }} / {{ grade.total_questions }}</td>
+                            <td>{{ (grade.score / grade.total_questions * 100) | round(2) }}%</td>
+                            <td>{{ grade.grade_date }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4">لا توجد درجات مسجلة لهذا الامتحان.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

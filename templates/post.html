@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نشر منشور جديد</title>
+</head>
+<body>
+    <h2>نشر منشور جديد</h2>
+    <form action="{{ url_for('post') }}" method="POST">
+        <textarea name="content" rows="4" cols="50" placeholder="اكتب منشورك هنا..." required></textarea>
+        <br>
+        <button type="submit">نشر</button>
+    </form>
+</body>
+</html>

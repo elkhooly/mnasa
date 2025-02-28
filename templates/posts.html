@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h2 class="page-title">المنشورات</h2>
+        {% if posts %}
+            {% for post in posts %}
+                <div class="post-box">
+                    <div class="post-header">
+                        <strong>{{ post.username }}</strong>
+                        <span class="timestamp">{{ post.timestamp }}</span>
+                    </div>
+                    <p class="post-content">{{ post.content }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-posts">لا توجد منشورات حتى الآن.</p>
+        {% endif %}
+    </div>
+{% endblock %}

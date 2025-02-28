@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 style="text-align: center; margin-top: 20px;">إضافة أسئلة إلى الامتحان</h2>
+    <form method="POST">
+        <!-- حقول إضافة السؤال -->
+        <div class="form-group">
+            <label for="question_text">نص السؤال:</label>
+            <textarea class="form-control" id="question_text" name="question_text" rows="3" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="question_type">نوع السؤال:</label>
+            <select class="form-control" id="question_type" name="question_type" required onchange="showFields()">
+                <option value="mcq">اختيار من متعدد</option>
+                <option value="true_false">صح/خطأ</option>
+                <option value="short_answer">إجابة قصيرة</option>
+            </select>
+        </div>
+
+        <!-- حقول اختيار من متعدد -->
+        <div id="mcq_fields" style="display: none;">
+            <div class="form-group">
+                <label for="choice1">الاختيار 1:</label>
+                <input type="text" class="form-control" id="choice1" name="choice1">
+            </div>
+            <div class="form-group">
+                <label for="choice2">الاختيار 2:</label>
+                <input type="text" class="form-control" id="choice2" name="choice2">
+            </div>
+            <div class="form-group">
+                <label for="choice3">الاختيار 3:</label>
+                <input type="text" class="form-control" id="choice3" name="choice3">
+            </div>
+            <div class="form-group">
+                <label for="choice4">الاختيار 4:</label>
+                <input type="text" class="form-control" id="choice4" name="choice4">
+            </div>
+            <div class="form-group">
+                <label for="correct_choice">الاختيار الصحيح:</label>
+                <select class="form-control" id="correct_choice" name="correct_choice">
+                    <option value="1">الاختيار 1</option>
+                    <option value="2">الاختيار 2</option>
+                    <option value="3">الاختيار 3</option>
+                    <option value="4">الاختيار 4</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- حقول صح/خطأ -->
+        <div id="true_false_fields" style="display: none;">
+            <div class="form-group">
+                <label for="correct_answer_tf">الإجابة الصحيحة:</label>
+                <select class="form-control" id="correct_answer_tf" name="correct_answer_tf">
+                    <option value="true">صح</option>
+                    <option value="false">خطأ</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- حقول إجابة قصيرة -->
+        <div id="short_answer_fields" style="display: none;">
+            <div class="form-group">
+                <label for="correct_answer_short">الإجابة الصحيحة:</label>
+                <input type="text" class="form-control" id="correct_answer_short" name="correct_answer_short">
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">إضافة السؤال</button>
+    </form>
+
+    <!-- عرض الأسئلة المضافة -->
+    <h4 style="margin-top: 30px;">الأسئلة المضافة</h4>
+    {% if questions %}
+        <ul class="list-group">
+            {% for question in questions %}
+                <li class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p><strong>السؤال:</strong> {{ question.question_text }}</p>
+                            <p><strong>النوع:</strong> {{ question.question_type }}</p>
+                            <p><strong>الإجابة الصحيحة:</strong> {{ question.correct_answer }}</p>
+                            {% if question.question_type == 'mcq' %}
+                                <p><strong>الاختيارات:</strong></p>
+                                <ul>
+                                    {% for choice in question.choices %}
+                                        <li>{{ choice.choice_text }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                        <div class="btn-group">
+                            <a href="{{ url_for('edit_question', question_id=question.id) }}"
+                               class="btn btn-sm btn-warning mr-2">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{{ url_for('delete_question', question_id=question.id) }}"
+                                  method="POST">
+                                <button type="submit"
+                                        class="btn btn-sm btn-danger"
+                                        onclick="return confirm('هل تريد حذف هذا السؤال؟')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>لم تتم إضافة أي أسئلة بعد.</p>
+    {% endif %}
+</div>
+
+<script>
+    function showFields() {
+        const questionType = document.getElementById('question_type').value;
+        document.getElementById('mcq_fields').style.display = 'none';
+        document.getElementById('true_false_fields').style.display = 'none';
+        document.getElementById('short_answer_fields').style.display = 'none';
+
+        if (questionType === 'mcq') {
+            document.getElementById('mcq_fields').style.display = 'block';
+        } else if (questionType === 'true_false') {
+            document.getElementById('true_false_fields').style.display = 'block';
+        } else if (questionType === 'short_answer') {
+            document.getElementById('short_answer_fields').style.display = 'block';
+        }
+    }
+
+    // تشغيل الدالة عند تحميل الصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+        showFields();
+    });
+</script>
+
+{% endblock %}

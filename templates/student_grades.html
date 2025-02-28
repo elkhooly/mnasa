@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 style="text-align: center; margin-top: 20px;">درجات الطالب</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>الامتحان</th>
+                <th>النتيجة</th>
+                <th>النسبة المئوية</th>
+                <th>التاريخ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for grade in grades %}
+                <tr>
+                    <td>{{ grade.exam_name }}</td>
+                    <td>{{ grade.score }} / {{ grade.total_questions }}</td>
+                    <td>{{ (grade.score / grade.total_questions * 100) | round(2) }}%</td>
+                    <td>{{ grade.grade_date }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

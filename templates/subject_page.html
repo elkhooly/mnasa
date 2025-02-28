@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-lg p-4">
+        <h2 class="text-center text-primary">
+            <i class="fas fa-book"></i> {{ subject.name }}
+        </h2>
+        <p><strong><i class="fas fa-chalkboard-teacher"></i> المعلم:</strong> {{ subject.teacher }}</p>
+        <p><strong><i class="fas fa-info-circle"></i> وصف المادة:</strong> {{ subject.description }}</p>
+    </div>
+
+    <hr>
+
+    {% if session.get('role') == 'teacher' %}
+    <div class="card shadow p-3">
+        <h4 class="text-success"><i class="fas fa-upload"></i> رفع الملفات والمحتوى</h4>
+        <form action="{{ url_for('upload_file', subject_id=subject.id) }}" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" class="form-control">
+            <button type="submit" class="btn btn-primary mt-2">رفع الملف</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <hr>
+
+    <div class="card shadow p-3">
+        <h4><i class="fas fa-folder-open"></i> الملفات المرفوعة</h4>
+        {% if files %}
+        <ul class="list-group">
+            {% for file in files %}
+            <li class="list-group-item">
+                {% if file.filetype == 'pdf' %}
+                📄 <a href="{{ url_for('static', filename='uploads/' + file.filename) }}" target="_blank">{{ file.filename }}</a>
+                {% elif file.filetype in ['mp4', 'avi', 'mov'] %}
+                🎥 <a href="{{ url_for('static', filename='uploads/' + file.filename) }}" target="_blank">مشاهدة الفيديو</a>
+                <br>
+                <video width="100%" controls>
+                    <source src="{{ url_for('static', filename='uploads/' + file.filename) }}" type="video/mp4">
+                    متصفحك لا يدعم تشغيل الفيديو.
+                </video>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>لم يتم رفع أي ملفات بعد.</p>
+        {% endif %}
+    </div>
+
+    {% if session.get('role') == 'teacher' %}
+    <div class="card shadow p-3 mt-3">
+        <h4><i class="fas fa-tasks"></i> إدارة الامتحانات</h4>
+        <a href="{{ url_for('add_exam', subject_id=subject.id) }}" class="btn btn-success">
+            <i class="fas fa-plus-circle"></i> إضافة امتحان
+        </a>
+    </div>
+    {% endif %}
+
+    <div class="card shadow p-3 mt-3">
+        <h4><i class="fas fa-file-alt"></i> الامتحانات</h4>
+        {% if exams %}
+        <ul class="list-group">
+            {% for exam in exams %}
+            <li class="list-group-item">
+                {% if exam.is_visible or session.get('role') == 'teacher' %}
+                <a href="{{ url_for('take_exam', exam_id=exam.id) }}" class="text-primary">
+                    <i class="fas fa-edit"></i> {{ exam.exam_name }}
+                </a>
+                {% else %}
+                <span class="text-muted">
+                    <i class="fas fa-lock"></i> {{ exam.exam_name }} ( هذا الامتحان غير متاح حاليا )
+                </span>
+                {% endif %}
+                <p>{{ exam.description }}</p>
+
+                {% if session.get('role') == 'teacher' %}
+                <div class="mt-2">
+                    <form action="{{ url_for('delete_exam', exam_id=exam.id) }}" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-danger btn-sm"
+                            onclick="return confirm('هل تريد الحذف نهائياً؟')">
+                            <i class="fas fa-trash-alt"></i> حذف
+                        </button>
+                    </form>
+
+                    <a href="{{ url_for('edit_exam', exam_id=exam.id) }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-edit"></i> تعديل
+                    </a>
+
+                    <a href="{{ url_for('toggle_exam_visibility', exam_id=exam.id) }}" class="btn btn-warning btn-sm">
+                        <i class="fas fa-eye-slash"></i> {% if exam.is_visible %} إخفاء {% else %} إظهار {% endif %}
+                    </a>
+                </div>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>لم يتم إضافة أي امتحانات بعد.</p>
+        {% endif %}
+    </div>
+
+    <hr>
+
+    {% if session.get('role') == 'teacher' %}
+    <div class="text-center">
+        <a href="{{ url_for('teacher_grades') }}" class="btn btn-primary">
+            <i class="fas fa-chart-bar"></i> عرض درجات الطلاب
+        </a>
+    </div>
+    {% endif %}
+
+    <hr>
+
+    <div class="text-center">
+        <a href="{{ url_for('subjects') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> العودة لقائمة المواد
+        </a>
+    </div>
+</div>
+{% endblock %}

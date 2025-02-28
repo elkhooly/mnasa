@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}أصدقائي{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        direction: rtl;
+        background-color: #f8f9fa;
+        font-family: Arial, sans-serif;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .friend-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .friend-item {
+        display: flex;
+        align-items: center;
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .friend-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .friend-item img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-left: 15px;
+    }
+
+    .friend-item .info {
+        flex-grow: 1;
+        text-align: right;
+    }
+
+    .friend-item .info h5 {
+        margin: 0;
+        font-size: 18px;
+        color: #333;
+    }
+
+    .friend-item .info p {
+        margin: 5px 0 0;
+        font-size: 14px;
+        color: #666;
+    }
+
+    .friend-item .actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .friend-item .actions a {
+        text-decoration: none;
+        color: #fff;
+        padding: 8px 12px;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .friend-item .actions .btn-primary {
+        background-color: #1877f2; /* لون أزرق مشابه للفيسبوك */
+    }
+
+    .friend-item .actions .btn-danger {
+        background-color: #ff4444; /* لون أحمر */
+    }
+
+    .no-friends {
+        text-align: center;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .no-friends .alert {
+        margin: 0;
+    }
+</style>
+
+<div class="container">
+    <h2 class="text-center mb-4">قائمة الأصدقاء</h2>
+
+    {% if friends %}
+        <div class="friend-list">
+            {% for friend in friends %}
+                <div class="friend-item">
+                    <img src="{{ url_for('static', filename='profile_pictures/' ~ (friend.profile_picture or 'default.png')) }}"
+                         alt="صورة {{ friend.username }}">
+                    <div class="info">
+                        <h5>{{ friend.username }}</h5>
+                        <p>{{ friend.email }}</p>
+                    </div>
+                    <div class="actions">
+                        <a href="{{ url_for('chat', friend_id=friend.id) }}">{{ friend.username }}" class="btn btn-primary">إرسال رسالة</a>
+                        <a href="#" > </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-friends">
+            <div class="alert alert-warning">ليس لديك أصدقاء بعد!</div>
+        </div>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h2 style="text-align: center; margin-top: 20px;">إضافة مادة دراسية جديدة</h2>
+        <form method="POST">
+            <label>اسم المادة:</label>
+            <input type="text" name="name" required class="form-control">
+
+            <label>اسم المعلم:</label>
+            <input type="text" name="teacher" required class="form-control">
+
+            <label>وصف المادة:</label>
+            <textarea name="description" class="form-control" required></textarea>
+
+            <button type="submit" class="btn btn-primary" style="margin-top: 10px;">إضافة المادة</button>
+        </form>
+    </div>
+{% endblock %}

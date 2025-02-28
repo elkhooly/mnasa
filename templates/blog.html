@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block title %}المدونة{% endblock %}
+{% block content %}
+<style>
+    :root {
+        --primary-color: #1877f2; /* اللون الأساسي */
+        --hover-bg: #e7f3ff; /* خلفية التحويم */
+    }
+
+    .dashboard-container {
+        direction: rtl;
+        background: #f0f2f5;
+        min-height: 100vh;
+        padding: 20px 0;
+    }
+
+    .custom-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        transition: transform 0.3s ease;
+    }
+
+    .custom-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .menu-list {
+        list-style: none;
+        padding: 15px 0;
+        margin: 0;
+    }
+
+    .menu-item {
+        border-bottom: 1px solid #ddd;
+    }
+
+    .menu-link {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        color: #1d1d1d;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .menu-link:hover {
+        background: var(--hover-bg);
+        padding-right: 25px;
+    }
+
+    .menu-icon {
+        width: 30px;
+        text-align: center;
+        margin-left: 15px;
+        color: var(--primary-color);
+    }
+
+    .btn-custom {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+        .menu-link {
+            font-size: 15px;
+            padding: 12px 15px;
+        }
+
+        .menu-icon {
+            font-size: 18px;
+        }
+    }
+</style>
+
+<div class="dashboard-container">
+    <div class="container">
+        <div class="custom-card">
+            <ul class="menu-list">
+                <!-- عنصر المواد الدراسية -->
+                <li class="menu-item">
+                    <a href="{{ url_for('subjects') }}" class="menu-link">
+                        <i class="fas fa-book-open menu-icon"></i>
+                        المواد الدراسية
+                    </a>
+                </li>
+
+                <!-- للمعلمين -->
+                {% if session.get('role') == 'teacher' %}
+                <li class="menu-item">
+                    <a href="{{ url_for('add_subject') }}" class="menu-link">
+                        <i class="fas fa-plus-circle menu-icon"></i>
+                        إضافة مادة جديدة
+                    </a>
+                </li>
+                {% endif %}
+
+                <!-- للمسؤولين -->
+                {% if session.get('role') == 'admin' %}
+                <li class="menu-item">
+                    <a href="{{ url_for('manage_users') }}" class="menu-link">
+                        <i class="fas fa-user-shield menu-icon"></i>
+                        لوحة التحكم الإدارية
+                    </a>
+                </li>
+                {% endif %}
+
+                <!-- عنصر الامتحانات -->
+                <li class="menu-item">
+                    <a href="{{ url_for('list_exams') }}" class="menu-link">
+                        <i class="fas fa-clipboard-list menu-icon"></i>
+                        الامتحانات
+                    </a>
+                </li>
+
+                <!-- عناصر الدرجات -->
+                <li class="menu-item">
+                    <a href="{{ url_for('student_grades') }}" class="menu-link">
+                        <i class="fas fa-chart-line menu-icon"></i>
+                        عرض الدرجات
+                    </a>
+                </li>
+
+                {% if session.get('role') == 'teacher' %}
+                <li class="menu-item">
+                    <a href="{{ url_for('teacher_grades') }}" class="menu-link">
+                        <i class="fas fa-users-class menu-icon"></i>
+                        درجات الطلاب
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+<script src="https://static.elfsight.com/platform/platform.js" async></script>
+<div class="elfsight-app-991a53ec-6cbf-46a7-abd5-c3ab5d31bf8f" data-elfsight-app-lazy></div>
+<!-- استخدام إصدار حديث من Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
