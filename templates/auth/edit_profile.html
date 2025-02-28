@@ -1,0 +1,30 @@
+<!-- ملف edit_profile.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>تعديل الملف الشخصي</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="username">اسم المستخدم:</label>
+            <input type="text" class="form-control" id="username" name="username" value="{{ account.username }}" required>
+        </div>
+        <div class="form-group">
+            <label for="email">البريد الإلكتروني:</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ account.email }}" required>
+        </div>
+        <div class="form-group">
+            <label for="password">كلمة المرور الجديدة (اختياري):</label>
+            <input type="password" class="form-control" id="password" name="password">
+        </div>
+        <div class="form-group">
+            <label for="profile_picture">صورة الملف الشخصي:</label>
+            <input type="file" class="form-control" id="profile_picture" name="profile_picture">
+            {% if account.profile_picture %}
+                <img src="{{ url_for('static', filename='profile_pictures/' + account.profile_picture) }}" alt="صورة الملف الشخصي" width="100">
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+    </form>
+</div>
+{% endblock %}
